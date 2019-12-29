@@ -1,10 +1,10 @@
 {
   "name": "amazon-sold-from",
   "description": "Show country flags on each product in Amazon.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "Apache-2.0",
-  "repository": "https://github.com/aws-samples/dynamodb-history-storer",
-  "homepage": "https://github.com/aws-samples/dynamodb-history-storer",
+  "repository": "https://github.com/ykmr1224/amazon-sold-from",
+  "homepage": "https://github.com/ykmr1224/amazon-sold-from",
   "dependencies": {},
   "devDependencies": {
     "chai": "^4.2",

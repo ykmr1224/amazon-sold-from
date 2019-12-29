@@ -1,6 +1,6 @@
 {
   "name": "AmazonSoldFrom",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Amazon上で商品の出品者がどの国から出品しているか簡単に見分けられるツールです",
   "permissions": ["storage", "activeTab", "declarativeContent"],
   "background": {
