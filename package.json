@@ -1,0 +1,31 @@
+{
+  "name": "amazon-sold-from",
+  "description": "Show country flags on each product in Amazon.",
+  "version": "0.1.1",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/aws-samples/dynamodb-history-storer",
+  "homepage": "https://github.com/aws-samples/dynamodb-history-storer",
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^4.2",
+    "mocha": "^5.2",
+    "nyc": "^14.1.1",
+    "sinon": "^7.2",
+    "sinon-chai": "^3.3"
+  },
+  "engines": {
+    "node": "10.17"
+  },
+  "files": [
+    "src/",
+    "images/",
+    "manifest.json"
+  ],
+  "scripts": {
+    "clean": "rm -rf ./build ./.nyc_output",
+    "test": "nyc mocha ./tst/",
+    "build": "mkdir -p build/pkg && cp -r src images manifest.json build/pkg",
+    "package": "(cd build/pkg && zip -r ../${npm_package_name}_${npm_package_version}.zip *)",
+    "echo": "echo ${npm_package_name}"
+  }
+}

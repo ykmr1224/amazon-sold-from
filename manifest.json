@@ -1,0 +1,35 @@
+{
+  "name": "AmazonSoldFrom",
+  "version": "0.1.1",
+  "description": "Amazon上で商品の出品者がどの国から出品しているか簡単に見分けられるツールです",
+  "permissions": ["storage", "activeTab", "declarativeContent"],
+  "background": {
+    "scripts": ["src/background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.amazon.co.jp/*"
+      ],
+      "js": [
+        "src/lib/jquery.min.js",
+        "src/logger.js",
+        "src/storage.js",
+        "src/script.js"
+      ],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ],
+  "page_action": {
+    "default_popup": "src/popup.html"
+  },
+  "icons": {
+    "16": "images/icon-16.png",
+    "32": "images/icon-32.png",
+    "48": "images/icon-48.png",
+    "128": "images/icon-128.png"
+  },
+  "manifest_version": 2
+}
