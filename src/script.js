@@ -23,10 +23,10 @@ class Extractor {
   }
 }
 
-let asinExtractor = new Extractor('\/(dp|gp\/product)\/([0-9A-Z]+)', 2);
+let asinExtractor = new Extractor('(?:\\/|%2F)(?:dp|gp\\/product)(?:\\/|%2F)([0-9A-Z]+)', 1);
 let smidExtractor = new Extractor('[?&;]smid=([0-9A-Z]{6,})', 1);
 let mExtractor = new Extractor('[?&;]m=([0-9A-Z]{6,})', 1);
-let sellerExtractor = new Extractor("[?&;]seller=([0-9A-Z]+)[^\']*' id='sellerProfileTriggerId'", 1);
+let sellerExtractor = new Extractor("[?&;]seller=([0-9A-Z]+)[^\'\"]*[\'\"] id=[\'\"]sellerProfileTriggerId[\'\"]", 1);
 
 let isSoldByAmazon = (html) => html.includes("<a href='/gp/help/customer/display.html?ie=UTF8&amp;nodeId=643004'>Amazon.co.jp</a>");
 
@@ -296,6 +296,26 @@ class CountryFlagAdder {
     });
   }
 
+  addLinkToMainImage(smid, country) {
+    $('#main-image-container').prepend(LinkGenerator.generate(smid, country, 32))
+  }
+
+  processMainImage() {
+    let url = window.location.href;
+    let asin = asinExtractor.extract(url);
+    if (asin !== null) {
+      let ppdHtml = $('#ppd').html();
+      let smid = smidExtractor.extract(url) || sellerExtractor.extract(ppdHtml);
+      if (smid !== null) {
+        sellerCountryRetriever.retrieve(smid, (country) => {
+          this.addLinkToMainImage(smid, country);
+        });
+      } else if (isSoldByAmazon(ppdHtml)) {
+        this.addLinkToMainImage(AMAZON_SMID, AMAZON);
+      }
+    }
+  }
+
   processElement(elm) {
     let url = $(elm).attr("href");
     if (url === undefined) {
@@ -340,6 +360,7 @@ class CountryFlagAdder {
     productSellerDao.sync(productSellerRetriever.cache);
     sellerCountryDao.sync(sellerCountryRetriever.cache);
     $('a.amz-cntry').show();
+    this.processMainImage();
     this.timerId = setInterval(this.scanElements, 1500, this);
   }
 
