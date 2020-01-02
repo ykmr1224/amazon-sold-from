@@ -36,6 +36,36 @@ class Retriever {
   }
 }
 
+class QueuedGetExecutor {
+  constructor(concurrency) {
+    this.queue = [];
+    this.concurrency = concurrency;
+    this.running = 0;
+  }
+
+  get(url, callback) {
+    log.debug('Schedule: ', url);
+    this.queue.push({url: url, callback: callback});
+    this.check();
+  }
+
+  check() {
+    if (this.running < this.concurrency) {
+      let task = this.queue.shift();
+      if (task !== undefined) {
+        this.running += 1;
+        log.debug('Execute: ', task.url);
+        $.get(task.url, (data) => {
+            task.callback(data);
+        }).always(() => {
+            this.running -= 1;
+            this.check();
+        });
+      }
+    }
+  }
+}
+
 class UrlGenerator {
   static getSellerUrl(smid) {
     if (smid === AMAZON_SMID) {
@@ -55,8 +85,13 @@ class UrlGenerator {
 class SellerCountryRetriever extends Retriever {
   static countryExtractor = new Extractor('<span class="a-list-item">([A-Z]{2})</span>', 1);
 
+  constructor() {
+    super();
+    this.executor = new QueuedGetExecutor(1);
+  }
+
   retrieve(smid, callback) {
-    $.get(UrlGenerator.getSellerUrl(smid), (data) => {
+    this.executor.get(UrlGenerator.getSellerUrl(smid), (data) => {
       callback(SellerCountryRetriever.countryExtractor.extractLast(data) || '??');
     });
   }
